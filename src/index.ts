@@ -26,15 +26,13 @@ const SUPPORTED_METHODS = [
   "faucet_getAddress",
   "faucet_request",
 ] as const;
-const SUPPORTED_NETWORKS = ["goerli", "sepolia"] as const;
+const SUPPORTED_NETWORKS = ["sepolia"] as const;
 
 const CLAIM_INTERVAL_MAP: Record<SupportedNetwork, number> = {
-  goerli: 1000 * 60 * 60 * 24 * 7, // 1 week
   sepolia: 1000 * 60 * 60 * 24 * 30, // 1 month
 };
 
 const CLAIM_AMOUNT_MAP: Record<SupportedNetwork, bigint> = {
-  goerli: 500000000000000000n, // 0.5 ETH
   sepolia: 250000000000000000n, // 0.25 ETH
 };
 
@@ -120,7 +118,7 @@ export default {
 
     const network =
       paths.length === 0
-        ? "goerli"
+        ? "sepolia"
         : SUPPORTED_NETWORKS.find((n) => n === paths[0]);
     if (!network) return makeResponse("Not Found", 404);
 
