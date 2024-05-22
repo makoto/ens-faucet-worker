@@ -5,6 +5,7 @@ import { makeResponseFunc } from "./helpers";
 export interface Env {
   USED_ADDRESS_KV: KVNamespace;
   RELAYER_AUTH: string;
+  ENS_GRAPH_URI: string;
 }
 
 type JsonRPC = {
@@ -60,7 +61,7 @@ const query = ({
 type DomainArray = { id: string }[];
 
 // check mainnet for if address has ownership of a name
-const checkHasName = async (address: string) => {
+const checkHasName = async (g: string, address: string) => {
   const gqlQuery = `{
     account(id: "${address.toLowerCase()}") {
       domains(first: 1) {
@@ -75,7 +76,7 @@ const checkHasName = async (address: string) => {
     }
   }`;
   const data = await fetch(
-    "https://api.thegraph.com/subgraphs/name/ensdomains/ens",
+    ENS_GRAPH_URI,
     {
       method: "POST",
       headers: {
@@ -111,7 +112,7 @@ export default {
     ctx: ExecutionContext
   ): Promise<Response> {
     const url = new URL(request.url);
-
+    console.log({env})
     const { makeResponse, makeRpcResponse } = makeResponseFunc(
       request.headers.get("origin") || ""
     );
@@ -214,7 +215,7 @@ export default {
     const hasClaimed =
       addressLastUsed && Date.now() - addressLastUsed < claimInterval;
 
-    const hasName = await checkHasName(address);
+    const hasName = await checkHasName(env.ENS_GRAPH_URI, address);
 
     if (body.method === "faucet_getAddress") {
       if (hasClaimed) {
