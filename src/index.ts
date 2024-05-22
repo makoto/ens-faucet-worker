@@ -112,7 +112,6 @@ export default {
     ctx: ExecutionContext
   ): Promise<Response> {
     const url = new URL(request.url);
-    console.log({env})
     const { makeResponse, makeRpcResponse } = makeResponseFunc(
       request.headers.get("origin") || ""
     );
